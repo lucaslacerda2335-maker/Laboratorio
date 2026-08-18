@@ -16,7 +16,8 @@ def inicializar_sistema():
     'bilirrubina': 6,
     'acido urico': 4,
     'colesterol HDL': 3,
-    'albumina': 6
+    'albumina': 6,
+    'cálcio': 1
     }
     if not os.path.exists(Nome_Arquivo_excel):
         # cria o DataFrame do estoque com os kits e suas quantidades
@@ -60,10 +61,10 @@ def menu_principal():
         print('-='*40)
         print(f'{"Bem vindo ao programa de testes bioquímicos":^40}')
         print('-='*40)
-        print('1-colesterol total           2-Magnésio                3-Glicose')
+        print('1-colesterol total           2-Magnésio                 3-Glicose')
         print('4-Hemoglobina                5-Fósforo                  6-Proteínas Totais')
         print('7-Bilirrubina                8-Ácido Úrico              9-Colesterol HDL')
-        print('10-Albumina                  11-Sair do programa')
+        print('10-Albumina                  11-cálcio                  12-Sair do programa')
         print('-='*40)
 
         opcao = input('Selecione o exame realizado: ').strip()
@@ -89,6 +90,8 @@ def menu_principal():
         elif opcao == '10':
             dados_resultado, estoque_atualizado = kits.albumina()
         elif opcao == '11':
+            dados_resultado, estoque_atualizado = kits.calcio()
+        elif opcao == '12':
             print('Saindo do programa...')
             break
         else:

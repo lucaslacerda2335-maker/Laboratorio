@@ -2,7 +2,7 @@
 import programa_lab
 
 kits=['colesterol', 'magnesio', 'glicose', 'hemoglobina', 'fosforo', 'proteinas totais', 
-      'bilirrubina', 'acido urico', 'colesterol HDL', 'albumina']
+      'bilirrubina', 'acido urico', 'colesterol HDL', 'albumina', 'cálcio']
 
 tipo_teste=['teste', 'padrão']
 
@@ -286,5 +286,28 @@ def albumina():
         'unidade:': 'g/dL',
         'Classificação:': 'Dentro do desejável' if result >= 3.5 and result <= 5.5 else 'Baixo' if result < 3.5 else 'Elevado'
         }, 
+        estoque_atualizado
+    )
+def calcio():
+    estoque_atualizado = estoque('cálcio')
+    nome_usuario = nome()
+    abs_values= absorbancias()
+    result = (abs_values[0]/abs_values) * 10
+    print(f'O valor do teste de cálcio realizado por: {nome_usuario}, foi de: {result:.2f} mg/dL')
+    if result >= 8.8 and result <=11.0:
+        print(f'os valores de cálcio estão dentro da normalidade para um individuo adulto')
+    elif result < 8.8:
+        print(f'os valores de cálcio estão muito baixos')
+    else:
+        print('valores de cálcio muito elevados')
+    return(
+        {
+            'Aluno': nome_usuario,
+            'Absorbância teste': abs_values[0],
+            'Absorbância padrão': abs_values[1],
+            'Resultado': round(result, 2),
+            'unidade': 'mg/dL',
+            'Classificação': 'Dentro do valor de referência' if result >= 8.8 and result <=11.0  else 'Fora dos padrões'  
+        },
         estoque_atualizado
     )
