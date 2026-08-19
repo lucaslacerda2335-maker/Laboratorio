@@ -5,52 +5,59 @@ import kits
 
 Nome_Arquivo_excel = 'Gerenciamento_lab.xlsx'
 
+mapeamento_menu ={
+    '1': ('colesterol', 'ponto final'),
+    '2': ('magnesio', 'ponto final'),
+    '3': ('glicose', 'ponto final'),
+    '4': ('hemoglobina', 'ponto final'),
+    '5': ('fosforo', 'ponto final'),
+    '6': ('proteinas totais', 'ponto final'),
+    '7': ('bilirrubina', 'especial'),
+    '8': ('acido urico', 'ponto final'),
+    '9': ('colesterol HDL', 'ponto final'),
+    '10': ('albumina', 'ponto final'),
+    '11': ('calcio', 'ponto final'),
+    '12': ('ureia', 'cinetico'),
+}
 def inicializar_sistema():
-    estoque_kits = {
-    'colesterol': 5,
-    'magnesio': 6,
-    'glicose': 8,
-    'hemoglobina': 4,
-    'fosforo': 3,
-    'proteinas totais': 5, 
-    'bilirrubina': 6,
-    'acido urico': 4,
-    'colesterol HDL': 3,
-    'albumina': 6,
-    'calcio': 1,
-    'ureia': 1
-    }
-    
-        
-       
+    if not os.path.exists(Nome_Arquivo_excel):
+        estoque_inicial = {
+            'colesterol': 5, 'magnesio': 6, 'glicose': 8,
+            'hemoglobina': 4, 'fosforo': 3, 'proteinas totais': 5,
+            'bilirrubina': 6, 'acido urico': 4, 'colesterol HDL': 3,
+            'albumina': 6, 'calcio': 1, 'ureia': 1
+        }
+        df_estoque= pd.DataFrame(list(estoque_inicial.items()), columns=['Kits','Estoque'])
+        df_resultados = pd.DataFrame(columns= ['Data/Hora', 'Aluno', 'Absorbância teste', 'Absorbância padrão', 'Resultado', 'unidade', 'Classificação'])
+        with pd.ExcelWriter(Nome_Arquivo_excel, engine= 'openpyxl') as writer:
+            df_estoque.to_excel(writer, sheet_name='Estoque', index=False)
+            df_resultados.to_excel(writer, sheet_name='Resultados', index=False)
+        print('Arquivo Excel inicializado com sucesso!')
 
 def carregar_estoque():
     df_estoque = pd.read_excel(Nome_Arquivo_excel, sheet_name='Estoque')
     #transforma o DataFrame de volta em um dicionário para facilitar a manipulação
-    return dict(zip(df_estoque['Kit'], df_estoque['Estoque']))
+    return dict(zip(df_estoque['Kits'], df_estoque['Estoque']))
 
-def salvar_estoque_atualizado(estoque_kits):
-    df_estoque = pd.DataFrame(list(estoque_kits.items()), columns=['Kit', 'Estoque'])
-    with pd.ExcelWriter(Nome_Arquivo_excel, mode='a', engine='openpyxl', if_sheet_exists='replace') as writer:
-        df_estoque.to_excel(writer, sheet_name='Estoque', index=False)
-  
-def salvar_no_excel(dados_exames):
-    ''' terá por função receber os dados obtidos do return, adicionar data/hora e adiciona ao excel '''
-    dados_exames['Data/Hora'] = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
-    df_novo=pd.DataFrame([dados_exames])
-
-    colunas = ['Data/Hora'] + [col for col in dados_exames.keys() if col != 'Data/Hora']
-    df_novo = df_novo[colunas]
-
-    df_existente = pd.read_excel(Nome_Arquivo_excel, sheet_name='Resultados')
-    df_atualizado = pd.concat([df_existente, df_novo], ignore_index=True)
-
-    with pd.ExcelWriter(Nome_Arquivo_excel, mode='a', engine='openpyxl', if_sheet_exists='replace') as writer:
-        df_atualizado.to_excel(writer, sheet_name='Resultados', index=False)
-    print(f'Dados salvos no arquivo {Nome_Arquivo_excel} com sucesso!')
+def salvar_dados(dados_exame, estoque_kits):
+    #Atualiza tanto o estoque quanto os dados de uma vez só
+    dados_exame['Data/Hora'] = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    df_novo_resultado = pd.DataFrame([dados_exame])
+    try:
+        df_estoque= pd.DataFrame(list(estoque_kits.items()), columns= ['Kits' , 'Estoque'])
+        df_resultados_existentes = pd.read_excel(Nome_Arquivo_excel, sheet_name='Resultados')
+        #concatena os exames novos e antigos 
+        df_resultados_atualizados = pd.concat([df_resultados_existentes, df_novo_resultado], ignore_index=True)
+        with pd.ExcelWriter(Nome_Arquivo_excel, engine='openpyxl') as writer:
+            df_estoque.to_excel(writer, sheet_name='Estoque', index=False)
+            df_resultados_atualizados.to_excel(writer, sheet_name='Resultados', index=False)
+        print(f'\nDados salvos no arquivo {Nome_Arquivo_excel} com sucesso')
+    except PermissionError:
+        print(f'ERRO!!! O arquivo {Nome_Arquivo_excel} está aberto no excel, por favor feche-o e refaça a operação para não perder dados')
 
 
 def menu_principal():
+    inicializar_sistema()
     while True:
         print('-='*40)
         print(f'{"Bem vindo ao programa de testes bioquímicos":^40}')
@@ -63,43 +70,29 @@ def menu_principal():
         print('-='*40)
 
         opcao = input('Selecione o exame realizado: ').strip()
-        dados_resultado = None
-        if opcao == '1':
-            dados_resultado, estoque_atualizado = kits.colesterol()
-        elif opcao == '2':
-            dados_resultado, estoque_atualizado = kits.magnesio()
-        elif opcao == '3':
-            dados_resultado, estoque_atualizado = kits.glicose()
-        elif opcao == '4':
-            dados_resultado, estoque_atualizado = kits.hemoglobina()
-        elif opcao == '5':
-            dados_resultado, estoque_atualizado = kits.fosforo()
-        elif opcao == '6':
-            dados_resultado, estoque_atualizado = kits.proteinas_totais()
-        elif opcao == '7':
-            dados_resultado, estoque_atualizado = kits.bilirrubina()
-        elif opcao == '8':
-            dados_resultado, estoque_atualizado = kits.acido_urico()
-        elif opcao == '9':
-            dados_resultado, estoque_atualizado = kits.colesterol_hdl()
-        elif opcao == '10':
-            dados_resultado, estoque_atualizado = kits.albumina()
-        elif opcao == '11':
-            dados_resultado, estoque_atualizado = kits.calcio()
-        elif opcao == '12':
-            dados_resultado, estoque_atualizado = kits.ureia()
-        elif opcao == '13':
+
+        if opcao == '13':
             print('Saindo do programa...')
             break
-        else:
-            print('Opção inválida. Tente novamente.')
+        if opcao not in mapeamento_menu:
+            print('opção invalida, tente novamente !')
             continue
+        nome_kit, tipo_teste = mapeamento_menu[opcao]
+        dados_resultado= None 
+        #execução modular, dependendo também da categoria do exame
+        if tipo_teste == 'ponto final':
+            dados_resultado, estoque_atualizado= kits.executar_teste_padrao(nome_kit)
+        elif tipo_teste == 'cinetico':
+            dados_resultado, estoque_atualizado= kits.executar_teste_cinetico(nome_kit)
+        elif tipo_teste == 'especial':
+            dados_resultado, estoque_atualizado= getattr(kits, nome_kit)()
 
         if dados_resultado:
-            salvar_no_excel(dados_resultado)
-            salvar_estoque_atualizado(estoque_atualizado)
+            salvar_dados(dados_resultado, estoque_atualizado)
             print('\n === Resumo do Laudo ===:')
             for chave, valor in dados_resultado.items():
                 print(f'{chave}: {valor}')
+if __name__ == '__main__':
+    menu_principal()
 
 
