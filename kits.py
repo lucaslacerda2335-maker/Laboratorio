@@ -62,8 +62,6 @@ conf_testes ={
     }
 }
 
-tipo_teste=['teste', 'padrão']
-tipo_teste2=['teste1', 'teste2', 'padrão1', 'padrão2']
 def estoque(nome_kit):
     estoque_kits = programa_lab.carregar_estoque()
     qtd_atual = estoque_kits.get(nome_kit, 0)
