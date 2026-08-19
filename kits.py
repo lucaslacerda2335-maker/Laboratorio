@@ -1,11 +1,11 @@
 
 import programa_lab
-
+from time import sleep 
 kits=['colesterol', 'magnesio', 'glicose', 'hemoglobina', 'fosforo', 'proteinas totais', 
-      'bilirrubina', 'acido urico', 'colesterol HDL', 'albumina', 'cálcio']
+      'bilirrubina', 'acido urico', 'colesterol HDL', 'albumina', 'calcio', 'ureia']
 
 tipo_teste=['teste', 'padrão']
-
+tipo_teste2=['teste1', 'teste2', 'padrão1', 'padrão2']
 def estoque(nome_kit):
     estoque_kits = programa_lab.carregar_estoque()
     print(f'\n [Estoque Atual de {nome_kit}: {estoque_kits[nome_kit]} unidades]')
@@ -30,7 +30,15 @@ def absorbancias():
     for const in range(0,2):
         num = float(input(f'Digite o valor da Absorbância {tipo_teste[const]} :'))
         values.append(num)
-    return values #importante para retornar os valores do teste 
+    return values #importante para retornar os valores do teste
+ 
+def absorbancias_cinetico():
+    valores = []
+    for const in range(0,4):
+        num = float(input(f'Digite os valores das absorbâncias (primeiro as duas leituras do teste/depois as duas leituras do padrão): {tipo_teste2[const]} '))
+        sleep(2)
+        valores.append(num)
+    return valores
 
 def colesterol():
     estoque_atualizado=estoque('colesterol')
@@ -50,7 +58,7 @@ def colesterol():
         'Aluno:': nome_usuario,
         'Absorbância teste:': abs_values[0],
         'Absorbância padrão:': abs_values[1],
-        'Resultado:': round(result, 2),
+        'Resultado:': result,
         'unidade:': 'mg/dL',
         'Classificação:': 'Desejável' if result <= 200.0 else 'Limítrofe' if result <= 239.0 else 'Elevado'  
         }, 
@@ -75,7 +83,7 @@ def magnesio():
         'Aluno:': nome_usuario,
         'Absorbância teste:': abs_values[0],
         'Absorbância padrão:': abs_values[1],
-        'Resultado:': round(result, 2),
+        'Resultado:': result,
         'unidade:': 'mg/dL',
         'Classificação:': 'Abaixo do desejável' if result <= 1.7 else 'Dentro do desejável' if result <= 2.6 else 'Elevado'
         }, 
@@ -103,7 +111,7 @@ def glicose():
         'Aluno:': nome_usuario,
         'Absorbância teste:': abs_values[0],
         'Absorbância padrão:': abs_values[1],
-        'Resultado:': round(result, 2),
+        'Resultado:': result,
         'unidade:': 'mg/dL',
         'Classificação:': 'Dentro do desejável' if result >= 65.0 and result <= 99.0 else 'Limítrofe' if result <= 125.0 else 'Elevado' if result > 125.0 else 'Baixo',
         }, 
@@ -128,7 +136,7 @@ def hemoglobina():
         'Aluno:': nome_usuario,
         'Absorbância teste:': abs_values[0],
         'Absorbância padrão:': abs_values[1],
-        'Resultado:': round(result, 2),
+        'Resultado:': result,
         'unidade:': 'g/dL',
         'Classificação:': 'Dentro do desejável' if result >= 12.0 and result <= 16.0 else 'Baixo (anemia)' if result < 12.0 else 'Elevado'
         }, 
@@ -153,7 +161,7 @@ def fosforo():
         'Aluno:': nome_usuario,
         'Absorbância teste:': abs_values[0],
         'Absorbância padrão:': abs_values[1],
-        'Resultado:': round(result, 2),
+        'Resultado:': result,
         'unidade:': 'mg/dL',
         'Classificação:': 'Dentro do desejável' if result >= 2.5 and result <= 4.5 else 'Baixo' if result < 2.5 else 'Elevado'
         }, 
@@ -178,7 +186,7 @@ def proteinas_totais():
         'Aluno:': nome_usuario,
         'Absorbância teste:': abs_values[0],
         'Absorbância padrão:': abs_values[1],
-        'Resultado:': round(result, 2),
+        'Resultado:': result,
         'unidade:': 'mg/dL',
         'Classificação:': 'Dentro do desejável' if result >= 6.0 and result <= 8.3 else 'Baixo' if result < 6.0 else 'Elevado'
         }, 
@@ -203,9 +211,9 @@ def bilirrubina():
         'Aluno:': nome_usuario,
         'Absorbância teste direta:': biliD,
         'Absorbância teste total:': biliT,
-        'Resultado direta:': round(resultd, 2),
-        'Resultado total:': round(resultT, 2),
-        'Resultado indireta:': round(resultI, 2),
+        'Resultado direta:': resultd,
+        'Resultado total:': resultT,
+        'Resultado indireta:': resultI,
         'unidade:': 'mg/dL',
         'Classificação direta:': 'Desejável' if resultd <= 0.3 else 'Elevado',
         'Classificação total:': 'Desejável' if resultT <= 1.2 else 'Elevado',
@@ -232,7 +240,7 @@ def acido_urico():
         'Aluno:': nome_usuario,
         'Absorbância teste:': abs_values[0],
         'Absorbância padrão:': abs_values[1],
-        'Resultado:': round(result, 2),
+        'Resultado:': result,
         'unidade:': 'mg/dL',
         'Classificação:': 'Dentro do desejável' if result >= 3.5 and result <= 7.2 else 'Baixo' if result < 3.5 else 'Elevado'
         }, 
@@ -257,7 +265,7 @@ def colesterol_hdl():
         'Aluno:': nome_usuario,
         'Absorbância teste:': abs_values[0],
         'Absorbância padrão:': abs_values[1],
-        'Resultado:': round(result, 2),
+        'Resultado:': result,
         'unidade:': 'mg/dL',
         'Classificação:': 'Dentro do desejável' if result >= 40.0 and result <= 60.0 else 'Baixo' if result < 40.0 else 'Elevado'
         }, 
@@ -282,17 +290,17 @@ def albumina():
         'Aluno:': nome_usuario,
         'Absorbância teste:': abs_values[0],
         'Absorbância padrão:': abs_values[1],
-        'Resultado:': round(result, 2),
+        'Resultado:': result,
         'unidade:': 'g/dL',
         'Classificação:': 'Dentro do desejável' if result >= 3.5 and result <= 5.5 else 'Baixo' if result < 3.5 else 'Elevado'
         }, 
         estoque_atualizado
     )
 def calcio():
-    estoque_atualizado = estoque('cálcio')
+    estoque_atualizado = estoque('calcio')
     nome_usuario = nome()
     abs_values= absorbancias()
-    result = (abs_values[0]/abs_values) * 10
+    result = (abs_values[0]/abs_values[1]) * 10
     print(f'O valor do teste de cálcio realizado por: {nome_usuario}, foi de: {result:.2f} mg/dL')
     if result >= 8.8 and result <=11.0:
         print(f'os valores de cálcio estão dentro da normalidade para um individuo adulto')
@@ -305,9 +313,31 @@ def calcio():
             'Aluno': nome_usuario,
             'Absorbância teste': abs_values[0],
             'Absorbância padrão': abs_values[1],
-            'Resultado': round(result, 2),
+            'Resultado': result,
             'unidade': 'mg/dL',
             'Classificação': 'Dentro do valor de referência' if result >= 8.8 and result <=11.0  else 'Fora dos padrões'  
+        },
+        estoque_atualizado
+    )
+def ureia():
+    estoque_atualizado = estoque('ureia')
+    nome_usuario = nome()
+    abs_valores = absorbancias_cinetico()
+    result = (abs_valores[0]-abs_valores[1])/(abs_valores[2]-abs_valores[3]) * 70
+    final=[abs_valores[0]-abs_valores[1], abs_valores[2]-abs_valores[3]]
+    print(f'O teste de ureia uv realizado por: {nome_usuario}, resultou em: {result:.2f} mg/dL')
+    if result >= 15.0 and result <= 45:
+        print('os valores de ureia estão dentro da normalidade')
+    else:
+        print('valores alterados')
+    return (
+        {
+            'Aluno': nome_usuario,
+            'Absorbância teste': final[0],
+            'Absorbância padrão': final[1],
+            'Resultado': result,
+            'unidade': 'mg/dL',
+            'Classificação': 'Dentro do valor de referência' if result >= 15.0 and result <=45.0  else 'Fora dos padrões'  
         },
         estoque_atualizado
     )

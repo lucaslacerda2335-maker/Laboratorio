@@ -17,18 +17,12 @@ def inicializar_sistema():
     'acido urico': 4,
     'colesterol HDL': 3,
     'albumina': 6,
-    'cálcio': 1
+    'calcio': 1,
+    'ureia': 1
     }
-    if not os.path.exists(Nome_Arquivo_excel):
-        # cria o DataFrame do estoque com os kits e suas quantidades
-        df_estoque = pd.DataFrame(list(estoque_kits.items()), columns=['Kit', 'Estoque'])
-        # cria a tabela de resultados com as colunas especificadas, mas sem dados
-        df_resultados = pd.DataFrame(columns=['Data/Hora'])
+    
         
-        #salva ambas no mesmo arquivo excel, mas em abas diferentes
-        with pd.ExcelWriter(Nome_Arquivo_excel) as writer:
-            df_estoque.to_excel(writer, sheet_name='Estoque', index=False)
-            df_resultados.to_excel(writer, sheet_name='Resultados', index=False)
+       
 
 def carregar_estoque():
     df_estoque = pd.read_excel(Nome_Arquivo_excel, sheet_name='Estoque')
@@ -64,7 +58,8 @@ def menu_principal():
         print('1-colesterol total           2-Magnésio                 3-Glicose')
         print('4-Hemoglobina                5-Fósforo                  6-Proteínas Totais')
         print('7-Bilirrubina                8-Ácido Úrico              9-Colesterol HDL')
-        print('10-Albumina                  11-cálcio                  12-Sair do programa')
+        print('10-Albumina                  11-cálcio                  12-ureia')
+        print('13-sair do programa')
         print('-='*40)
 
         opcao = input('Selecione o exame realizado: ').strip()
@@ -92,6 +87,8 @@ def menu_principal():
         elif opcao == '11':
             dados_resultado, estoque_atualizado = kits.calcio()
         elif opcao == '12':
+            dados_resultado, estoque_atualizado = kits.ureia()
+        elif opcao == '13':
             print('Saindo do programa...')
             break
         else:
