@@ -18,6 +18,8 @@ mapeamento_menu ={
     '10': ('albumina', 'ponto final'),
     '11': ('calcio', 'ponto final'),
     '12': ('ureia', 'cinetico'),
+    '13': ('Triglicerides', 'ponto final'),
+    '14': ('Lactato enzimatico', 'ponto final')
 }
 def inicializar_sistema():
     if not os.path.exists(Nome_Arquivo_excel):
@@ -25,7 +27,8 @@ def inicializar_sistema():
             'colesterol': 5, 'magnesio': 6, 'glicose': 8,
             'hemoglobina': 4, 'fosforo': 3, 'proteinas totais': 5,
             'bilirrubina': 6, 'acido urico': 4, 'colesterol HDL': 3,
-            'albumina': 6, 'calcio': 1, 'ureia': 1
+            'albumina': 6, 'calcio': 1, 'ureia': 1, 'Triglicerides': 2,
+            'Lactato enzimatico': 3
         }
         df_estoque= pd.DataFrame(list(estoque_inicial.items()), columns=['Kits','Estoque'])
         df_resultados = pd.DataFrame(columns= ['Data/Hora', 'Aluno', 'Absorbância teste', 'Absorbância padrão', 'Resultado', 'unidade', 'Classificação'])
@@ -66,12 +69,12 @@ def menu_principal():
         print('4-Hemoglobina                5-Fósforo                  6-Proteínas Totais')
         print('7-Bilirrubina                8-Ácido Úrico              9-Colesterol HDL')
         print('10-Albumina                  11-cálcio                  12-ureia')
-        print('13-sair do programa')
+        print('13-Triglicerides             14-Lactato enzimatico      15-sair do programa')
         print('-='*40)
 
         opcao = input('Selecione o exame realizado: ').strip()
 
-        if opcao == '13':
+        if opcao == '15':
             print('Saindo do programa...')
             break
         if opcao not in mapeamento_menu:

@@ -10,10 +10,10 @@ conf_testes ={
         'unidade':'mg/dL',
         'intervalo': [(200.0, 'Desejável'), (239.0, 'Limítrofe'), (float('inf'), 'Elevado')]
     },
-    'magnésio':{
+    'magnesio':{
         'fator': 2.0,
         'unidade':'mg/dL',
-        'intervalo': [(1.7,'Abaixo do desejável'), (2,6, 'Desejável'), (float('inf'), 'Elevado')]
+        'intervalo': [(1.7,'Abaixo do desejável'), (2.6, 'Desejável'), (float('inf'), 'Elevado')]
     },
     'glicose':{
         'fator': 100.0,
@@ -59,7 +59,17 @@ conf_testes ={
         'fator': 70.0,
         'unidade': 'mg/dL',
         'intervalo':[(14.9, 'Valores abaixo do IR'), (45.0, 'Desejável'), (float('inf'), 'Elevado')]
-    }
+    },
+    'Triglicerides': {
+        'fator': 200.0,
+        'unidade': 'mg/dL',
+        'intervalo':[(149.0, 'Desejável'), (200.0, 'Limitrofe'), (float('inf'), 'Elevado')]
+    },
+    'Lactato enzimatico':{
+        'fator': 40,
+        'unidade': 'mg/dL',
+        'intervalo': [(4.49, 'Valor abaixo do IR'), (19.8, 'Desejável'), (float('inf'), 'Elevado')]
+    }  
 }
 
 def estoque(nome_kit):
@@ -125,6 +135,7 @@ def executar_teste_padrao(nome_kit):
 
     return {
         'Aluno': nome_usuario,
+        'Teste': nome_kit,
         'Absorbância teste': abs_teste,
         'Absorbância padrão': abs_padrao,
         'Resultado': resultado,
@@ -164,6 +175,7 @@ def executar_teste_cinetico(nome_kit, qtd_leituras = 2):
     return (
         {
             'Aluno': nome_usuario,
+            'Teste': nome_kit,
             'Absorbância teste':leituras[0],
             'Absorbância padrão':leituras[1],
             'Delta teste': delta_teste,
@@ -171,7 +183,7 @@ def executar_teste_cinetico(nome_kit, qtd_leituras = 2):
             'Resultado': resultado,
             'unidade': cfg['unidade'],
             'Classificação': classificacao
-    }, estoque_atualizado
+        }, estoque_atualizado
         )
 def bilirrubina():
     estoque_atualizado = estoque('bilirrubina')
@@ -199,5 +211,8 @@ def bilirrubina():
         'Classificação total': 'Desejável' if resultado_t <= 1.2 else 'Elevado',
         'Classificação indireta': 'Desejável' if resultado_i <= 1.0 else 'Elevado'
     }, estoque_atualizado
+   
+
+ 
 
    
