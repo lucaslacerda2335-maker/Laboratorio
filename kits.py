@@ -1,8 +1,7 @@
 
 import programa_lab
 from time import sleep 
-kits=['colesterol', 'magnesio', 'glicose', 'hemoglobina', 'fosforo', 'proteinas totais', 
-      'bilirrubina', 'acido urico', 'colesterol HDL', 'albumina', 'calcio', 'ureia']
+
 #Mapeamento dos testes com seus fatores, unidades e faixa de referência
 conf_testes ={
     'colesterol':{
@@ -69,7 +68,7 @@ conf_testes ={
         'fator': 40,
         'unidade': 'mg/dL',
         'intervalo': [(4.49, 'Valor abaixo do IR'), (19.8, 'Desejável'), (float('inf'), 'Elevado')]
-    }  
+    }
 }
 
 def estoque(nome_kit):
@@ -96,8 +95,10 @@ def estoque(nome_kit):
     
 def nome():
     return input('Digite seu nome: ').strip()
+
 def obter_float(mensagem):
-    # Garante que a entrada do usuário seja um número válido e maior que zero 
+    # Garante que a entrada do usuário seja um número 
+    # válido e maior que zero 
     while True:
         try:
             valor = float(input(mensagem))
@@ -136,9 +137,9 @@ def executar_teste_padrao(nome_kit):
     return {
         'Aluno': nome_usuario,
         'Teste': nome_kit,
-        'Absorbância teste': abs_teste,
-        'Absorbância padrão': abs_padrao,
-        'Resultado': resultado,
+        'Absorbância teste': round(abs_teste,2),
+        'Absorbância padrão': round(abs_padrao,2),
+        'Resultado': round(resultado,2),
         'unidade': cfg['unidade'],
         'Classificação': classificacao
     }, estoque_atualizado 
@@ -178,9 +179,9 @@ def executar_teste_cinetico(nome_kit, qtd_leituras = 2):
             'Teste': nome_kit,
             'Absorbância teste':leituras[0],
             'Absorbância padrão':leituras[1],
-            'Delta teste': delta_teste,
-            'Delta padrão':delta_padrao,
-            'Resultado': resultado,
+            'Delta teste': round(delta_teste,2),
+            'Delta padrão':round(delta_padrao,2),
+            'Resultado': round(resultado,2),
             'unidade': cfg['unidade'],
             'Classificação': classificacao
         }, estoque_atualizado
@@ -203,16 +204,78 @@ def bilirrubina():
         'Aluno': nome_usuario,
         'Absorbância teste direta': bili_d,
         'Absorbância teste total': bili_t,
-        'Resultado direta': resultado_d,
-        'Resultado total': resultado_t,
-        'Resultado indireta': resultado_i,
+        'Resultado direta': round(resultado_d,2),
+        'Resultado total': round(resultado_t,2),
+        'Resultado indireta': round(resultado_i,2),
         'unidade': 'mg/dL',
         'Classificação direta': 'Desejável' if resultado_d <= 0.3 else 'Elevado',
         'Classificação total': 'Desejável' if resultado_t <= 1.2 else 'Elevado',
         'Classificação indireta': 'Desejável' if resultado_i <= 1.0 else 'Elevado'
     }, estoque_atualizado
    
+def ferro_serico():
+    estoque_atualizado = estoque('ferro_serico')
+    nome_usuario = nome() 
+    abs_teste = []
+    num = 0
+    for i in range(0,2):
+        num = obter_float(f'Digite o valor da absorbância do teste {i + 1}:')
+        abs_teste.append(num)
+    abs_padrao = float(input('Digite a absorbância do padrão: '))
+    delta_teste = abs_teste[1] - abs_teste[0]
+    resultado = (delta_teste/abs_padrao) * 500.0
 
- 
+    print(f'O resultado do teste de ferro sérico, realizado por: {nome_usuario}\nfoi de:{resultado:.2f}')
+    return {
+        'Aluno': nome_usuario,
+        'Teste':'ferro sérico',
+        'Absorbância teste': round(abs_teste[:],2),
+        'Delta teste': round(delta_teste,2),
+        'Resultado': round(resultado,2),
+        'unidade':'ug/dL',
+        'Classificação': 'Desejável' if resultado >= 49.9 and resultado <= 170.0 else 'fora dos parâmetros'
+    }, estoque_atualizado
+def LDH():
+    estoque_atualizado = estoque('LDH')
+    nome_usuario = nome()
+    abs_teste = []
+    num = 0
+    for i in range(0,2):
+        num = obter_float(f'Digite o valor da absorbância do teste {i +1}: ')
+        abs_teste.append(num)
+    delta_teste = (abs_teste[0] - abs_teste[1])/2
+    resultado = delta_teste * 8095
+    print(f'O resultado do teste de ferro sérico, realizado por: {nome_usuario}\nfoi de:{resultado:.2f}')
+
+    return{
+        'Aluno':nome_usuario,
+        'Teste': 'LDH',
+        'Absorbância teste': abs_teste[:],
+        'Delta teste':round(delta_teste,2),
+        'Resultado':round(resultado,2),
+        'unidade': 'U/L',
+        'Classificação': 'Desejável' if resultado >= 200.0 and resultado <= 480.0 else 'fora dos parâmetros'
+    }, estoque_atualizado
+
+def gama_GT():
+    estoque_atualizado = estoque('gama_GT')
+    nome_usuario = nome()
+    abs_teste = []
+    num = 0
+    for i in range(0,2):
+        num = obter_float(f'Digite o valor da absorbância do teste {i +1}: ')
+        abs_teste.append(num)
+    delta_teste = (abs_teste[1] - abs_teste[0])/2
+    resultado = delta_teste * 2577
+    print(f'O resultado do teste de ferro sérico, realizado por: {nome_usuario}\nfoi de:{resultado:.2f}')
+    return{
+            'Aluno':nome_usuario,
+            'Teste': 'gama GT',
+            'Absorbância teste': abs_teste[:],
+            'Delta teste':round(delta_teste,2),
+            'Resultado':round(resultado,2),
+            'unidade': 'U/L',
+            'Classificação': 'Desejável' if resultado >= 5.0 and resultado <= 58.0 else 'fora dos parâmetros'
+        }, estoque_atualizado
 
    
