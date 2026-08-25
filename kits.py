@@ -68,6 +68,11 @@ conf_testes ={
         'fator': 40,
         'unidade': 'mg/dL',
         'intervalo': [(4.49, 'Valor abaixo do IR'), (19.8, 'Desejável'), (float('inf'), 'Elevado')]
+    },
+    'Fosfatase Alcalina':{
+        'fator': 45.0,
+        'unidade': 'U/L',
+        'intervalo': [(12.9, 'Valor abaixo do IR'), (43.0, 'Desejável'), (float('inf'), 'Elevado')]
     }
 }
 
@@ -75,8 +80,8 @@ def estoque(nome_kit):
     estoque_kits = programa_lab.carregar_estoque()
     qtd_atual = estoque_kits.get(nome_kit, 0)
     print(f'\n [Estoque Atual de {nome_kit}: {qtd_atual} unidades]')
-    resp = str(input('Foi aberto um novo kit ? (Sim / Não)')).strip().upper()
     while True:
+        resp = str(input('Foi aberto um novo kit ? (Sim / Não)')).strip().upper()
         if resp in ['SIM', 'S'] and estoque_kits[nome_kit] > 0:
             estoque_kits[nome_kit] -= 1
             print(f'Novo estoque de {nome_kit}: {estoque_kits[nome_kit]} unidades')
@@ -95,6 +100,10 @@ def estoque(nome_kit):
     
 def nome():
     return input('Digite seu nome: ').strip()
+
+def validade():
+    val=str(input('Digite a validade o kit. modelo(dd/mm/aaaa):  '))
+    return val
 
 def obter_float(mensagem):
     # Garante que a entrada do usuário seja um número 
@@ -127,6 +136,7 @@ def executar_teste_padrao(nome_kit):
     cfg= conf_testes[nome_kit]
     estoque_atualizado = estoque(nome_kit)
     nome_usuario = nome()
+    val=validade()
     abs_teste, abs_padrao = absorbancias()
     resultado = (abs_teste/abs_padrao) * cfg['fator']
     classificacao = classificar_resultado(resultado, cfg['intervalo'])
@@ -141,7 +151,8 @@ def executar_teste_padrao(nome_kit):
         'Absorbância padrão': round(abs_padrao,2),
         'Resultado': round(resultado,2),
         'unidade': cfg['unidade'],
-        'Classificação': classificacao
+        'Classificação': classificacao,
+        'validade': val
     }, estoque_atualizado 
 
 def executar_teste_cinetico(nome_kit, qtd_leituras = 2):
@@ -149,6 +160,7 @@ def executar_teste_cinetico(nome_kit, qtd_leituras = 2):
     cfg=conf_testes[nome_kit]
     estoque_atualizado = estoque(nome_kit)
     nome_usuario=nome()
+    val=validade()
     categorias = ['teste', 'padrão']
     leituras = [[], []]
     for idx, categoria in enumerate(categorias):
@@ -183,13 +195,14 @@ def executar_teste_cinetico(nome_kit, qtd_leituras = 2):
             'Delta padrão':round(delta_padrao,2),
             'Resultado': round(resultado,2),
             'unidade': cfg['unidade'],
-            'Classificação': classificacao
+            'Classificação': classificacao,
+            'validade': val
         }, estoque_atualizado
         )
 def bilirrubina():
     estoque_atualizado = estoque('bilirrubina')
     nome_usuario = nome()
-    
+    val = validade()
     bili_d = obter_float('Digite a Absorbância do teste de bilirrubina direta: ')
     bili_t = obter_float('Digite a Absorbância do teste de bilirrubina total: ')
     
@@ -210,12 +223,14 @@ def bilirrubina():
         'unidade': 'mg/dL',
         'Classificação direta': 'Desejável' if resultado_d <= 0.3 else 'Elevado',
         'Classificação total': 'Desejável' if resultado_t <= 1.2 else 'Elevado',
-        'Classificação indireta': 'Desejável' if resultado_i <= 1.0 else 'Elevado'
+        'Classificação indireta': 'Desejável' if resultado_i <= 1.0 else 'Elevado',
+        'validade': val
     }, estoque_atualizado
    
 def ferro_serico():
     estoque_atualizado = estoque('ferro_serico')
-    nome_usuario = nome() 
+    nome_usuario = nome()
+    val = validade() 
     abs_teste = []
     num = 0
     for i in range(0,2):
@@ -229,15 +244,17 @@ def ferro_serico():
     return {
         'Aluno': nome_usuario,
         'Teste':'ferro sérico',
-        'Absorbância teste': round(abs_teste[:],2),
+        'Absorbância teste': abs_teste[:],
         'Delta teste': round(delta_teste,2),
         'Resultado': round(resultado,2),
         'unidade':'ug/dL',
-        'Classificação': 'Desejável' if resultado >= 49.9 and resultado <= 170.0 else 'fora dos parâmetros'
+        'Classificação': 'Desejável' if resultado >= 49.9 and resultado <= 170.0 else 'fora dos parâmetros',
+        'validade': val
     }, estoque_atualizado
 def LDH():
     estoque_atualizado = estoque('LDH')
     nome_usuario = nome()
+    val = validade()
     abs_teste = []
     num = 0
     for i in range(0,2):
@@ -254,12 +271,14 @@ def LDH():
         'Delta teste':round(delta_teste,2),
         'Resultado':round(resultado,2),
         'unidade': 'U/L',
-        'Classificação': 'Desejável' if resultado >= 200.0 and resultado <= 480.0 else 'fora dos parâmetros'
+        'Classificação': 'Desejável' if resultado >= 200.0 and resultado <= 480.0 else 'fora dos parâmetros',
+        'validade': val
     }, estoque_atualizado
 
 def gama_GT():
     estoque_atualizado = estoque('gama_GT')
     nome_usuario = nome()
+    val = validade()
     abs_teste = []
     num = 0
     for i in range(0,2):
@@ -275,7 +294,32 @@ def gama_GT():
             'Delta teste':round(delta_teste,2),
             'Resultado':round(resultado,2),
             'unidade': 'U/L',
-            'Classificação': 'Desejável' if resultado >= 5.0 and resultado <= 58.0 else 'fora dos parâmetros'
+            'Classificação': 'Desejável' if resultado >= 5.0 and resultado <= 58.0 else 'fora dos parâmetros',
+            'validade': val
         }, estoque_atualizado
+def fosfatase_alcalina_DGKC():
+    estoque_atualizado = estoque('fosfatase_alcalina_DGKC')
+    nome_usuario = nome()
+    val = validade()
+    abs_teste = []
+    num = 0
+    for i in range(0,4):
+        num = obter_float(f'Digite o valor da absorbância A{i}: ')
+        abs_teste.append(num)
+    delta_teste = (abs_teste[1]-abs_teste[0]) + (abs_teste[2]-abs_teste[1]) + (abs_teste[3]-abs_teste[2])
+    resultado = (delta_teste/3) * 2720
+    print(f'O resultado do teste de fosfatase alcalina DKGC, realizado por: {nome_usuario}\n foi de: {resultado:.2f}')
+    return {
+        'Aluno':nome_usuario,
+        'Teste': 'fosfatase alcalina DGKC',
+        'Absorbância teste': abs_teste[:],
+        'Delta teste':round(delta_teste,2),
+        'Resultado':round(resultado,2),
+        'unidade': 'U/L',
+        'Classificação': 'Desejável' if resultado >= 13.0 and resultado <= 43.0 else 'fora dos parâmetros',
+        'validade': val
+    }, estoque_atualizado
+
+
 
    
